@@ -6,7 +6,7 @@ const path = require("path");
 const { UploadMultiImage } = require("../Middleware/UploadImageMiddleware");
 const fs = require("fs");
 const ensureUploadDirExists = (type) => {
-  const dir = `../uploads/${type}`;
+  const dir = `uploads/${type}`;
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }

@@ -2,6 +2,10 @@ const expressAsyncHandler = require("express-async-handler");
 
 const ApiError = require("../Resuble/ApiErrors");
 const FeatureApi = require("../Utils/Feature");
+const path = require("path");
+
+const { fsRemove } = require("../Utils/imagesHandler");
+const { log } = require("console");
 
 exports.createOne = (Model) =>
   expressAsyncHandler(async (req, res) => {

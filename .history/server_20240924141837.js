@@ -21,7 +21,7 @@ const { createFirstManagerAccount } = require("./Services/EmployeesService");
 
 const app = express();
 app.use(express.json());
-const uploadsPath = path.join(__dirname, "../uploads");
+const uploadsPath = path.join(__dirname, "uploads");
 app.use(express.static(uploadsPath));
 dotenv.config({ path: "config.env" });
 app.use((req, res, next) => {
@@ -46,7 +46,7 @@ app.use("/api/v1/contracts", RoutesContracts);
 app.use("/api/v1/document", RoutesDocument);
 app.use("/api/v1/notification", RoutesNotification);
 createFirstManagerAccount();
-app.use(express.static(path.join(__dirname, "../dist")));
+app.use(express.static(path.join(__dirname, "dist")));
 app.get("*", (req, res) => {
   if (!req.originalUrl.startsWith("/api")) {
     res.sendFile(path.join(__dirname, "../dist", "index.html"));

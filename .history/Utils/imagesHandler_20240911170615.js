@@ -6,7 +6,7 @@ const path = require("path");
 const { UploadMultiImage } = require("../Middleware/UploadImageMiddleware");
 const fs = require("fs");
 const ensureUploadDirExists = (type) => {
-  const dir = `../uploads/${type}`;
+  const dir = `uploads/${type}`;
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -35,7 +35,7 @@ exports.resizeImage = (type) =>
           .resize(1024, 1024)
           .toFormat(imageType)
           .jpeg({ quality: 95 })
-          .toFile(`../uploads/${type}/${filename}`);
+          .toFile(`uploads/${type}/${filename}`);
 
         req.body.images.push({
           image: filename,

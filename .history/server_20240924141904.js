@@ -21,7 +21,7 @@ const { createFirstManagerAccount } = require("./Services/EmployeesService");
 
 const app = express();
 app.use(express.json());
-const uploadsPath = path.join(__dirname, "../uploads");
+const uploadsPath = path.join(__dirname, "uploads");
 app.use(express.static(uploadsPath));
 dotenv.config({ path: "config.env" });
 app.use((req, res, next) => {
