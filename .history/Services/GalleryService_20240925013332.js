@@ -37,7 +37,7 @@ exports.deleteGallery = expressAsyncHandler(async (req, res, next) => {
 
         const filePathImage = path.resolve(
           __dirname,
-          "../../uploads/gallery",
+          "../../uploadsuploads/gallery",
           relativePathImage
         );
         fsRemove(filePathImage);

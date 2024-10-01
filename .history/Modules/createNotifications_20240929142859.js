@@ -22,7 +22,7 @@ const createNotifications = new mongoose.Schema(
     }, // تفاصيل المهمة
     gallery: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Gallerys",
+      ref: "Contracts",
     }, // تفاصيل المهمة
     msg: { type: String, required: true }, // رسالة الإشعار
   },

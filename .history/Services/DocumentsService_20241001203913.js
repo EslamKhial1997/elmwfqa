@@ -28,35 +28,29 @@ exports.createDouments = expressAsyncHandler(async (req, res) => {
   
       // إنشاء إشعار لكل ماركتر
       const marketersNotifications = contracts.user.marketers.map((marketer) => {
-        if (req.body.kind !== "taking") {
-          
-          return createNotificationsModel.create({
-            assignedBy: contracts.user._id, // من قام بإسناد الإشعار
-            assignedTo: marketer._id,       // تعيين الإشعار لكل مسوق
-            contracts: contracts._id,       // تعيين الإشعار لكل مسوق
-            msg: `${req.user.name} قام بألغاء العقد`,           // الرسالة
-          });
-        }
+        return createNotificationsModel.create({
+          assignedBy: contracts.user._id, // من قام بإسناد الإشعار
+          assignedTo: marketer._id,       // تعيين الإشعار لكل مسوق
+          contracts: contracts._id,       // تعيين الإشعار لكل مسوق
+          msg: `${req.user.name} قام بألغاء العقد`,           // الرسالة
+        });
       });
   
       // إنشاء إشعار لكل مدير
       const managersNotifications = employees.map((manager) => {
-        if (req.body.kind !== "taking") {
-
-          return createNotificationsModel.create({
-            assignedBy: contracts.user._id, // من قام بإسناد الإشعار
-            assignedTo: manager._id,   
-            contracts: contracts._id,      // تعيين الإشعار لكل مدير
-            msg: `${req.user.name} قام بألغاء العقد`,             // الرسالة
-          });
-        }
+        return createNotificationsModel.create({
+          assignedBy: contracts.user._id, // من قام بإسناد الإشعار
+          assignedTo: manager._id,   
+          contracts: contracts._id,      // تعيين الإشعار لكل مدير
+          msg: `${req.user.name} قام بألغاء العقد`,             // الرسالة
+        });
       });
   
       // دمج الإشعارات معاً (المسوقين والمدراء)
       const allNotifications = [...marketersNotifications, ...managersNotifications];
   
       // انتظر حتى يتم إنشاء جميع الإشعارات
-      await Promise.all(allNotifications);
+     req.body await Promise.all(allNotifications);
   
       // إرسال الاستجابة في حالة النجاح
       res.status(201).json({
@@ -75,5 +69,3 @@ exports.createDouments = expressAsyncHandler(async (req, res) => {
   
 exports.getDocuments = factory.getAll(createDocumentsModel);
 exports.getDocument = factory.getOne(createDocumentsModel);
-exports.updateDocument = factory.updateOne(createDocumentsModel);
-exports.deleteDocument = factory.deleteOne(createDocumentsModel);

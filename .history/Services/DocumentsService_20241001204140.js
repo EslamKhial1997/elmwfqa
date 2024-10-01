@@ -75,5 +75,3 @@ exports.createDouments = expressAsyncHandler(async (req, res) => {
   
 exports.getDocuments = factory.getAll(createDocumentsModel);
 exports.getDocument = factory.getOne(createDocumentsModel);
-exports.updateDocument = factory.updateOne(createDocumentsModel);
-exports.deleteDocument = factory.deleteOne(createDocumentsModel);

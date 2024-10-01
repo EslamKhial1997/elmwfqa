@@ -4,7 +4,6 @@ const ApiError = require("../Resuble/ApiErrors");
 const createGallerysModel = require("../Modules/createGallery");
 const createCartModel = require("../Modules/createCart");
 const createNotificationsModel = require("../Modules/createNotifications");
-const createEmployeesModel = require("../Modules/createEmployees");
 
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
@@ -18,10 +17,11 @@ exports.createCart = expressAsyncHandler(async (req, res, next) => {
   const galleryModal = await createGallerysModel.findById(req.body.gallery);
   let cart = await createCartModel.findOne({ user: req.user._id });
 
+
   if (!galleryModal) return next(new ApiError(`الوحدة غير موجودة`, 404));
 
   const { gallery } = req.body;
-
+  
   if (!cart) {
     // Create new cart if it doesn't exist
     cart = await createCartModel.create({
@@ -53,10 +53,10 @@ exports.createCart = expressAsyncHandler(async (req, res, next) => {
   // إنشاء إشعار لكل مدير
   const managersNotifications = employees.map((manager) => {
     return createNotificationsModel.create({
-      assignedBy: req.user._id, // من قام بإسناد الإشعار
-      assignedTo: manager._id,
-      gallery: gallery._id, // تعيين الإشعار لكل مدير
-      msg: `${req.user.name} قام العميل بأضافه وحدة في المفضله`, // الرسالة
+      assignedBy: contracts.user._id, // من قام بإسناد الإشعار
+      assignedTo: manager._id,   
+      contracts: contracts._id,      // تعيين الإشعار لكل مدير
+      msg: `${contracts.user.name} قام العميل بأضافه وحدة في المفضله`,             // الرسالة
     });
   });
   await Promise.all(managersNotifications);
@@ -71,7 +71,9 @@ exports.getMyCart = expressAsyncHandler(async (req, res, next) => {
   const cart = await createCartModel.findOne({ user: req.user._id });
 
   if (!cart) {
-    return next(new ApiError(`لايوجد وحدات`, 404));
+    return next(
+      new ApiError(`لايوجد وحدات`, 404)
+    );
   }
 
   res.status(200).json({

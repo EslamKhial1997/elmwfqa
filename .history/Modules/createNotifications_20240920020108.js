@@ -20,10 +20,6 @@ const createNotifications = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Contracts",
     }, // تفاصيل المهمة
-    gallery: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Gallerys",
-    }, // تفاصيل المهمة
     msg: { type: String, required: true }, // رسالة الإشعار
   },
   { timestamps: true } // لضبط التوقيتات (createdAt و updatedAt)

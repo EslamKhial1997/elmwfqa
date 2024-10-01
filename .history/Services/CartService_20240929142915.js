@@ -4,7 +4,6 @@ const ApiError = require("../Resuble/ApiErrors");
 const createGallerysModel = require("../Modules/createGallery");
 const createCartModel = require("../Modules/createCart");
 const createNotificationsModel = require("../Modules/createNotifications");
-const createEmployeesModel = require("../Modules/createEmployees");
 
 const calcTotalPrice = (cart) => {
   let totalPrice = 0;
@@ -53,10 +52,10 @@ exports.createCart = expressAsyncHandler(async (req, res, next) => {
   // إنشاء إشعار لكل مدير
   const managersNotifications = employees.map((manager) => {
     return createNotificationsModel.create({
-      assignedBy: req.user._id, // من قام بإسناد الإشعار
+      assignedBy: contracts.user._id, // من قام بإسناد الإشعار
       assignedTo: manager._id,
       gallery: gallery._id, // تعيين الإشعار لكل مدير
-      msg: `${req.user.name} قام العميل بأضافه وحدة في المفضله`, // الرسالة
+      msg: `${contracts.user.name} قام العميل بأضافه وحدة في المفضله`, // الرسالة
     });
   });
   await Promise.all(managersNotifications);
