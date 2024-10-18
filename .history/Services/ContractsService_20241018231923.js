@@ -200,66 +200,29 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
     });
   }
 
-  // معالجة بيانات المحامي
-  try {
-    if (req.body.attorney) {
-      req.body.attorney = JSON.parse(req.body.attorney);
-    }
-  } catch (err) {
-    return res.status(400).json({
-      status: "error",
-      msg: "Invalid attorney data format",
-    });
-  }
-
-  // معالجة تفاصيل الحالة
-  try {
-    if (req.body.statusDetails) {
-      req.body.statusDetails = JSON.parse(req.body.statusDetails);
-    }
-  } catch (err) {
-    return res.status(400).json({
-      status: "error",
-      msg: "Invalid statusDetails data format",
-    });
-  }
-
   // تعيين التفاصيل إذا كان هناك عربون
   if (req.body.deposit && !req.body.statusDetails) {
     req.body.statusDetails = statusDetails;
     req.body.contractsStatus = "paper";
     req.body.available = true;
+    req.body.UpdateStatus = Date.now();
+    req.body.depositRallyStatus=undefined;
   }
 
-  // حذف الحقول بناءً على نوع الدفع
+  const updateDocById = await createContractsModel.findByIdAndUpdate(
+    req.params.id,
+    req.body,
 
-  // تحديث العقد
-  try {
-    const updateDocById = await createContractsModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    { new: true }
+  );
+
+  if (!updateDocById)
+    next(
+      new ApiError(`Sorry Can't Update This ID From ID :${req.params.id}`, 404)
     );
-
-    if (!updateDocById) {
-      return next(new ApiError(`Sorry Can't Update This ID From ID :${req.params.id}`, 404));
-    }
-
-    await updateDocById.save();
-    if (req.body.paidKind === "cash") {
-      await createContractsModel.updateOne(
-        { _id: req.params.id },
-        { $unset: { employeesBank: "", phone: "", bank: "" } }
-      );
-    }
-  
-    res.status(200).json({ status: "Success Update", data: updateDocById });
-  } catch (error) {
-    console.error("Error updating contract:", error);
-    res.status(500).json({ status: "error", msg: "Failed to update contract" });
-  }
+  updateDocById.save();
+  res.status(200).json({ status: "Success Update", data: updateDocById });
 });
-
 
 exports.deleteContract = factory.deleteOne(createContractsModel);
 // exports.cancelContracts = expressAsyncHandler(async (req, res, next) => {

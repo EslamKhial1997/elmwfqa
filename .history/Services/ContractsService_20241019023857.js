@@ -125,6 +125,8 @@ exports.createContracts = expressAsyncHandler(async (req, res) => {
 exports.getContracts = factory.getAll(createContractsModel);
 exports.getContract = factory.getOne(createContractsModel);
 exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
+  console.log(req.body.statusDetails);
+
   const statusDetails = {
     paper: {
       kind: false,
@@ -189,6 +191,10 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
       },
     });
   } else {
+    await createContractsModel.updateOne(
+      { _id: req.params.id }, // الشرط لتحديد المستند
+      { $unset: { depositRallyStatus: "" ,employeesBank:"" , phone:""} } // حذف الحقل
+    );
     Object.assign(statusDetails, {
       tax: {
         kind: false,
@@ -199,8 +205,6 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
       },
     });
   }
-
-  // معالجة بيانات المحامي
   try {
     if (req.body.attorney) {
       req.body.attorney = JSON.parse(req.body.attorney);
@@ -211,8 +215,6 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
       msg: "Invalid attorney data format",
     });
   }
-
-  // معالجة تفاصيل الحالة
   try {
     if (req.body.statusDetails) {
       req.body.statusDetails = JSON.parse(req.body.statusDetails);
@@ -230,36 +232,21 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
     req.body.contractsStatus = "paper";
     req.body.available = true;
   }
+  // req.body.remainingSaay = req.body.saay - req.body.depositSaay
+  const updateDocById = await createContractsModel.findByIdAndUpdate(
+    req.params.id,
+    req.body,
 
-  // حذف الحقول بناءً على نوع الدفع
+    { new: true }
+  );
 
-  // تحديث العقد
-  try {
-    const updateDocById = await createContractsModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+  if (!updateDocById)
+    next(
+      new ApiError(`Sorry Can't Update This ID From ID :${req.params.id}`, 404)
     );
-
-    if (!updateDocById) {
-      return next(new ApiError(`Sorry Can't Update This ID From ID :${req.params.id}`, 404));
-    }
-
-    await updateDocById.save();
-    if (req.body.paidKind === "cash") {
-      await createContractsModel.updateOne(
-        { _id: req.params.id },
-        { $unset: { employeesBank: "", phone: "", bank: "" } }
-      );
-    }
-  
-    res.status(200).json({ status: "Success Update", data: updateDocById });
-  } catch (error) {
-    console.error("Error updating contract:", error);
-    res.status(500).json({ status: "error", msg: "Failed to update contract" });
-  }
+  updateDocById.save();
+  res.status(200).json({ status: "Success Update", data: updateDocById });
 });
-
 
 exports.deleteContract = factory.deleteOne(createContractsModel);
 // exports.cancelContracts = expressAsyncHandler(async (req, res, next) => {

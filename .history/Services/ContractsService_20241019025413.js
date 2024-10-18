@@ -246,13 +246,6 @@ exports.updateContractsStatus = expressAsyncHandler(async (req, res, next) => {
     }
 
     await updateDocById.save();
-    if (req.body.paidKind === "cash") {
-      await createContractsModel.updateOne(
-        { _id: req.params.id },
-        { $unset: { employeesBank: "", phone: "", bank: "" } }
-      );
-    }
-  
     res.status(200).json({ status: "Success Update", data: updateDocById });
   } catch (error) {
     console.error("Error updating contract:", error);
